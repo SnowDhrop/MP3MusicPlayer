@@ -103,6 +103,13 @@ public class MusicPlayerGUI extends JFrame {
         pauseButton.setBorderPainted(false);
         pauseButton.setBackground(null);
         pauseButton.setVisible(false);
+        pauseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                disablePauseButtonEnablePlayButton();
+                musicPlayer.pauseSong();
+            }
+        });
         playbackBtns.add(pauseButton);
 
         // Next Button
@@ -134,10 +141,11 @@ public class MusicPlayerGUI extends JFrame {
         loadSong.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                jFileChooser.showOpenDialog(MusicPlayerGUI.this);
+                // An integer is returned to let us know what the user did (open or cancel)
+                int result = jFileChooser.showOpenDialog(MusicPlayerGUI.this);
                 File selectedFile = jFileChooser.getSelectedFile();
 
-                if (selectedFile != null) {
+                if (result == JFileChooser.APPROVE_OPTION && selectedFile != null) {
                     // Create a song obj based on selected file
                     Song song = new Song(selectedFile.getPath());
 
@@ -178,7 +186,7 @@ public class MusicPlayerGUI extends JFrame {
         playButton.setVisible(false);
         playButton.setEnabled(false);
 
-        // Turn off play button
+        // Turn on pause button
         pauseButton.setVisible(true);
         pauseButton.setEnabled(true);
     }
