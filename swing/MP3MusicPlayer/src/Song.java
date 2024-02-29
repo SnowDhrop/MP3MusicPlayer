@@ -24,6 +24,7 @@ public class Song {
         try {
             mp3File = new Mp3File(filePath);
             frameRatePerMilliseconds = (double) mp3File.getFrameCount() / mp3File.getLengthInMilliseconds();
+            songLength = convertToSongLengthFormat();
 
             // The library jaudiotagger allows me to create an audiofile obj to read mp3's file information
             AudioFile audioFile = AudioFileIO.read(new File(filePath));
@@ -62,5 +63,16 @@ public class Song {
 
     public double getFrameRatePerMilliseconds() {
         return frameRatePerMilliseconds;
+    }
+
+    public String convertToSongLengthFormat() {
+        long minutes = mp3File.getLengthInSeconds() / 60;
+        long seconds = mp3File.getLengthInSeconds() % 60;
+
+        // %: specify format, 0: blank space must be fill with 0 if variable is too short
+        // 2: specify minimal length of the variable, d: variable used like a decimal
+        String formattedTime = String.format("%02d:%02d", minutes, seconds);
+
+        return formattedTime;
     }
 }

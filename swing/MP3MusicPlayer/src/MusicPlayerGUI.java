@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Hashtable;
 
 public class MusicPlayerGUI extends JFrame {
     // Color configurations
@@ -20,6 +21,7 @@ public class MusicPlayerGUI extends JFrame {
     private JFileChooser jFileChooser;
     private JLabel songTitle, songArtist;
     private JPanel playbackBtns;
+    private JSlider playbackSlider;
 
     public MusicPlayerGUI() {
         super("Music Player");
@@ -36,7 +38,7 @@ public class MusicPlayerGUI extends JFrame {
         // Change the frame color
         getContentPane().setBackground(FRAME_COLOR);
 
-        musicPlayer = new MusicPlayer();
+        musicPlayer = new MusicPlayer(this);
         jFileChooser = new JFileChooser();
         // Set a default path for file explorer
         jFileChooser.setCurrentDirectory(new File("src/assets"));
@@ -72,7 +74,7 @@ public class MusicPlayerGUI extends JFrame {
         add(songArtist);
 
         // Playback slider
-        JSlider playbackSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
+        playbackSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
         playbackSlider.setBounds(getWidth() / 2 - 300/2, 365, 300, 40);
         playbackSlider.setBackground(null);
         add(playbackSlider);
@@ -163,6 +165,8 @@ public class MusicPlayerGUI extends JFrame {
                     // Update song title and artist
                     updateSongTitleAndArtist(song);
 
+                    updatePlaybackSlider(song);
+
                     // Toggle on pause button and toggle off play button
                     enablePauseButtonDisablePlayButton();
                 }
@@ -226,6 +230,34 @@ public class MusicPlayerGUI extends JFrame {
     private void updateSongTitleAndArtist(Song song) {
         songTitle.setText(song.getSongTitle());
         songArtist.setText(song.getSongArtist());
+    }
+
+    // Update the playback slider when loading a song
+    private void updatePlaybackSlider(Song song) {
+        //update max count for slider
+        playbackSlider.setMaximum(song.getMp3File().getFrameCount());
+
+        // Create the song length label
+        Hashtable<Integer, JLabel> labelTable = new Hashtable<>();
+
+        JLabel labelBeginning = new JLabel("00:00");
+        labelBeginning.setFont(new Font("Dialog", Font.BOLD, 18));
+        labelBeginning.setForeground(TEXT_COLOR);
+
+        JLabel labelEnd = new JLabel(song.getSongLength());
+        labelEnd.setFont(new Font("Dialog", Font.BOLD, 18));
+        labelEnd.setForeground(TEXT_COLOR);
+
+        labelTable.put(0, labelBeginning);
+        labelTable.put(song.getMp3File().getFrameCount(), labelEnd);
+
+        playbackSlider.setLabelTable(labelTable);
+        playbackSlider.setPaintLabels(true);
+    }
+
+    // Update the playback slider from the music player class
+    public void setPlaybackSliderValue(int frame) {
+        playbackSlider.setValue(frame);
     }
 }
 
