@@ -21,6 +21,18 @@ public class MusicPlayer extends PlaybackListener {
     // Track how many milliseconds has passed since playing the song (used for update the slider)
     private int currentTimeInMilli;
 
+    public void setCurrentFrame(int frame) {
+        currentFrame = frame;
+    };
+
+    public void setCurrrentTimeInMilli(int timeInMilli) {
+        currentTimeInMilli = timeInMilli;
+    }
+
+    public Song getCurrentSong() {
+        return currentSong;
+    }
+
     public MusicPlayer(MusicPlayerGUI musicPlayerGUI) {
         this.musicPlayerGUI = musicPlayerGUI;
     }
@@ -101,8 +113,14 @@ public class MusicPlayer extends PlaybackListener {
             @Override
             public void run() {
                 if (isPaused) {
-                    synchronized(playSignal) {
-                        playSignal.wait();
+                    try {
+                        // Wait till it gets notified by other thread to continue
+                        // Make sure that isPaused boolean flag updates to false before continuing
+                        synchronized(playSignal) {
+                            playSignal.wait();
+                        }
+                    } catch(Exception e) {
+                        e.printStackTrace();
                     }
                 }
                 while(!isPaused) {
