@@ -18,6 +18,9 @@ public class MusicPlayer extends PlaybackListener {
     private ArrayList<Song> playlist;
 
     private boolean isPaused;
+    private boolean songFinished; // Tell when the song has finished
+    private boolean pressedNext, pressedPrev;
+
     private int currentFrame; // The last frame when the playback is finished
     // Track how many milliseconds has passed since playing the song (used for update the slider)
     private int currentTimeInMilli;
@@ -87,8 +90,8 @@ public class MusicPlayer extends PlaybackListener {
 
     public void pauseSong() {
         if (advancedPlayer != null) {
-            stopSong();
             isPaused = true;
+            stopSong();
         }
     }
 
@@ -188,7 +191,10 @@ public class MusicPlayer extends PlaybackListener {
 
         currentPlaylistIndex++;
 
-        stopSong();
+        pressedNext = true;
+
+        if (!songFinished) stopSong();
+
         musicPlayerGUI.disablePauseButtonEnablePlayButton();
 
         currentSong = playlist.get(currentPlaylistIndex);
@@ -211,7 +217,12 @@ public class MusicPlayer extends PlaybackListener {
         currentPlaylistIndex--;
         if (currentPlaylistIndex < 0) currentPlaylistIndex = 0;
 
-        stopSong();
+        pressedPrev = true;
+
+        if (!songFinished) stopSong();
+
+        System.out.println(currentPlaylistIndex);
+
         musicPlayerGUI.disablePauseButtonEnablePlayButton();
 
         currentSong = playlist.get(currentPlaylistIndex);
@@ -232,6 +243,9 @@ public class MusicPlayer extends PlaybackListener {
     public void playbackStarted(PlaybackEvent evt) {
         // This method gets called in the beginning of the song
         System.out.println("Playback started");
+        songFinished = false;
+        pressedNext = false;
+        pressedPrev = false;
     }
 
     @Override
@@ -241,6 +255,19 @@ public class MusicPlayer extends PlaybackListener {
 
         if (isPaused) {
             currentFrame += (int) ((double) evt.getFrame() * currentSong.getFrameRatePerMilliseconds());
+        } else {
+            songFinished = true;
+            if (playlist == null) {
+                musicPlayerGUI.disablePauseButtonEnablePlayButton();
+            } else {
+                if (pressedPrev || pressedNext) return;
+                
+                if (currentPlaylistIndex == playlist.size() -1){
+                    musicPlayerGUI.disablePauseButtonEnablePlayButton();
+                } else {
+                    nextSong();
+                }
+            }
         }
     }
 }
