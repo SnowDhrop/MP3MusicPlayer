@@ -5,8 +5,8 @@ import javazoom.jl.player.advanced.PlaybackEvent;
 import javazoom.jl.player.advanced.PlaybackListener;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
+import java.io.*;
+import java.util.ArrayList;
 
 public class MusicPlayer extends PlaybackListener {
     public static final Object playSignal = new Object(); // Used to update isPaused more synchronously
@@ -15,6 +15,7 @@ public class MusicPlayer extends PlaybackListener {
 
     // JLayer Library allows us to create an AdvancedPlayer obj which will handle playing the music
     private AdvancedPlayer advancedPlayer;
+    private ArrayList<Song> playlist;
 
     private boolean isPaused;
     private int currentFrame; // The last frame when the playback is finished
@@ -41,6 +42,43 @@ public class MusicPlayer extends PlaybackListener {
         currentSong = song;
 
         if (currentSong != null) {
+            playCurrentSong();
+        }
+    }
+
+    public void loadPlaylist(File playlistFile) {
+        playlist = new ArrayList<>();
+
+        // Store the paths from the text file into the playlist array list
+        try {
+            FileReader fileReader = new FileReader(playlistFile);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+            // Read each line from the text file and store the text into the songpath variable
+            String songPath;
+            while((songPath = bufferedReader.readLine()) != null) {
+                // Create song object based on song path
+                Song song = new Song(songPath);
+
+                playlist.add(song);
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        if (!playlist.isEmpty()){
+            musicPlayerGUI.setPlaybackSliderValue(0);
+            currentTimeInMilli = 0;
+
+            // Update current song to the first song in the playlist
+            currentSong = playlist.get(0);
+            currentFrame = 0;
+
+            // Update gui
+            musicPlayerGUI.enablePauseButtonDisablePlayButton();
+            musicPlayerGUI.updateSongTitleAndArtist(currentSong);
+            musicPlayerGUI.updatePlaybackSlider(currentSong);
+
             playCurrentSong();
         }
     }

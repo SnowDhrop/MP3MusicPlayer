@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
 import java.util.Hashtable;
 
@@ -183,7 +184,10 @@ public class MusicPlayerGUI extends JFrame {
                 int result = jFileChooser.showOpenDialog(MusicPlayerGUI.this);
                 File selectedFile = jFileChooser.getSelectedFile();
 
-                if (result == JFileChooser.APPROVE_OPTION && selectedFile != null) {
+                if (result == JFileChooser.APPROVE_OPTION
+                        && selectedFile != null
+                        && selectedFile.getName().substring(selectedFile.getName().length() -4).equalsIgnoreCase(".mp3")
+                ) {
                     // Create a song obj based on selected file
                     Song song = new Song(selectedFile.getPath());
 
@@ -219,12 +223,32 @@ public class MusicPlayerGUI extends JFrame {
 
         // Load playlist into playlist menu
         JMenuItem loadPlaylist = new JMenuItem("Load Playlist");
+        loadPlaylist.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser jFileChooser = new JFileChooser();
+                jFileChooser.setFileFilter(new FileNameExtensionFilter("Playlist", "txt"));
+                jFileChooser.setCurrentDirectory(new File("src/assets"));
+
+                int result = jFileChooser.showOpenDialog(MusicPlayerGUI.this);
+                File selectedFile = jFileChooser.getSelectedFile();
+
+                if (result == JFileChooser.APPROVE_OPTION && selectedFile != null
+                && selectedFile.getName().substring(selectedFile.getName().length() - 4).equalsIgnoreCase(".txt")
+                ) {
+                    musicPlayer.stopSong();
+
+                    // Load playlist
+                    musicPlayer.loadPlaylist(selectedFile);
+                }
+            }
+        });
         playlistMenu.add(loadPlaylist);
 
         add(toolBar);
     }
 
-    private void enablePauseButtonDisablePlayButton() {
+    public void enablePauseButtonDisablePlayButton() {
         // Retrieve reference to the buttons from playbackBtns panel
         JButton playButton = (JButton) playbackBtns.getComponent(1);
         JButton pauseButton = (JButton) playbackBtns.getComponent(2);
@@ -238,7 +262,7 @@ public class MusicPlayerGUI extends JFrame {
         pauseButton.setEnabled(true);
     }
 
-    private void disablePauseButtonEnablePlayButton() {
+    public void disablePauseButtonEnablePlayButton() {
         // Retrieve reference to the buttons from playbackBtns panel
         JButton playButton = (JButton) playbackBtns.getComponent(1);
         JButton pauseButton = (JButton) playbackBtns.getComponent(2);
@@ -262,13 +286,13 @@ public class MusicPlayerGUI extends JFrame {
         return null;
     }
 
-    private void updateSongTitleAndArtist(Song song) {
+    public void updateSongTitleAndArtist(Song song) {
         songTitle.setText(song.getSongTitle());
         songArtist.setText(song.getSongArtist());
     }
 
     // Update the playback slider when loading a song
-    private void updatePlaybackSlider(Song song) {
+    public void updatePlaybackSlider(Song song) {
         //update max count for slider
         playbackSlider.setMaximum(song.getMp3File().getFrameCount());
 
