@@ -45,8 +45,15 @@ public class MusicPlayer extends PlaybackListener {
 
     public void loadSong(Song song) {
         currentSong = song;
+        playlist = null;
+
+        if (!songFinished) stopSong();
 
         if (currentSong != null) {
+            currentFrame = 0;
+            currentTimeInMilli = 0;
+            musicPlayerGUI.setPlaybackSliderValue(0);
+
             playCurrentSong();
         }
     }
@@ -198,10 +205,11 @@ public class MusicPlayer extends PlaybackListener {
         musicPlayerGUI.disablePauseButtonEnablePlayButton();
 
         currentSong = playlist.get(currentPlaylistIndex);
-
+        
         // Update time
         currentFrame = 0;
         currentTimeInMilli = 0;
+        musicPlayerGUI.setPlaybackSliderValue(0);
 
         // Update gui
         musicPlayerGUI.enablePauseButtonDisablePlayButton();
