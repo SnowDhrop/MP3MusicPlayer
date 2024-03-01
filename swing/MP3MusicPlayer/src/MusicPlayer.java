@@ -184,8 +184,32 @@ public class MusicPlayer extends PlaybackListener {
     public void nextSong() {
         if (playlist == null) return;
 
+        if (currentPlaylistIndex + 1 > playlist.size() - 1) return;
+
         currentPlaylistIndex++;
-        if (currentPlaylistIndex > (playlist.size() - 1)) return;
+
+        stopSong();
+        musicPlayerGUI.disablePauseButtonEnablePlayButton();
+
+        currentSong = playlist.get(currentPlaylistIndex);
+
+        // Update time
+        currentFrame = 0;
+        currentTimeInMilli = 0;
+
+        // Update gui
+        musicPlayerGUI.enablePauseButtonDisablePlayButton();
+        musicPlayerGUI.updateSongTitleAndArtist(currentSong);
+        musicPlayerGUI.updatePlaybackSlider(currentSong);
+
+        playCurrentSong();
+    }
+
+    public void prevSong() {
+        if (playlist == null) return;
+
+        currentPlaylistIndex--;
+        if (currentPlaylistIndex < 0) currentPlaylistIndex = 0;
 
         stopSong();
         musicPlayerGUI.disablePauseButtonEnablePlayButton();

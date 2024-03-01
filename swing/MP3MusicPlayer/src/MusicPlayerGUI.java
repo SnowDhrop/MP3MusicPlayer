@@ -121,6 +121,12 @@ public class MusicPlayerGUI extends JFrame {
         JButton prevButton = new JButton(loadImage("src/assets/previous.png"));
         prevButton.setBorderPainted(false);
         prevButton.setBackground(null);
+        prevButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                musicPlayer.prevSong();
+            }
+        });
         playbackBtns.add(prevButton);
 
         // Play Button
@@ -132,7 +138,9 @@ public class MusicPlayerGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 musicPlayer.playCurrentSong();
                 // Toggle on play button and toggle off pause button
-                enablePauseButtonDisablePlayButton();
+                if (musicPlayer.getCurrentSong() != null) {
+                    enablePauseButtonDisablePlayButton();
+                }
             }
         });
         playbackBtns.add(playButton);
