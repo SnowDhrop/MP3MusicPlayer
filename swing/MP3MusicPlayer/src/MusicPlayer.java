@@ -205,7 +205,7 @@ public class MusicPlayer extends PlaybackListener {
         musicPlayerGUI.disablePauseButtonEnablePlayButton();
 
         currentSong = playlist.get(currentPlaylistIndex);
-        
+
         // Update time
         currentFrame = 0;
         currentTimeInMilli = 0;
