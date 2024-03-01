@@ -166,7 +166,7 @@ public class MusicPlayer extends PlaybackListener {
                         e.printStackTrace();
                     }
                 }
-                while(!isPaused) {
+                while(!isPaused && !songFinished && !pressedNext && !pressedPrev) {
                     try {
                         currentTimeInMilli++;
                         int calculatedFrame = (int) ((double) currentTimeInMilli * 2.08 * currentSong.getFrameRatePerMilliseconds());
@@ -220,8 +220,6 @@ public class MusicPlayer extends PlaybackListener {
         pressedPrev = true;
 
         if (!songFinished) stopSong();
-
-        System.out.println(currentPlaylistIndex);
 
         musicPlayerGUI.disablePauseButtonEnablePlayButton();
 
