@@ -208,6 +208,13 @@ public class MusicPlayerGUI extends JFrame {
 
         // Create playlist into playlist menu
         JMenuItem createPlaylist = new JMenuItem("Create Playlist");
+        createPlaylist.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new MusicPlaylistDialog(MusicPlayerGUI.this).setVisible(true);
+
+            }
+        });
         playlistMenu.add(createPlaylist);
 
         // Load playlist into playlist menu
